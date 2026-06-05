@@ -1,0 +1,26 @@
+name: Validator
+
+on:
+  workflow_call:
+
+jobs:
+
+  validator:
+
+    runs-on: ubuntu-latest
+
+    outputs:
+      build_type: ${{ steps.detect.outputs.build_type }}
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - id: detect
+        run: |
+          teste="dotnet"
+          if [ -z ${teste} ]; then
+            echo "build_type=nodejs" >> $GITHUB_OUTPUT
+          else
+            echo "build_type=teste" >> $GITHUB_OUTPUT
+          fi
