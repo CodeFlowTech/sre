@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      build_type: ${{ steps.detect.outputs.build_type }}
+      ambiente: prd
 
     steps:
 
@@ -24,4 +24,3 @@ jobs:
           else
             echo "build_type=teste" >> $GITHUB_OUTPUT
           fi
-          
