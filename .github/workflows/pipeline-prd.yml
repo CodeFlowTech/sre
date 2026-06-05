@@ -11,6 +11,5 @@ jobs:
       - uses: CodeFlowTech/sre/modules/build/dotnet@main
   
   flow:
-    needs: validator
-    uses: CodeFlowTech/sre/.github/workflows/pipeline-${{ needs.validator.outputs.ambiente }}@main
+    uses: CodeFlowTech/sre/.github/workflows/pipeline-${{outputs.validator.ambiente}}@main
 
