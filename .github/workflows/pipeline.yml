@@ -6,7 +6,12 @@ on:
 jobs:
 
   validator:
-    uses: CodeFlowTech/sre/modules/validators/validation.yaml@main
+    runs-on: ubuntu-latest
+    outputs:
+      ambiente: ${{ steps.validation.outputs.ambiente }}
+    steps:
+      - id: validation
+        uses: CodeFlowTech/sre/modules/validators/validation@main
   
   flow_hml:
     needs: validator
