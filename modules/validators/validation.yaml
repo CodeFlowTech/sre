@@ -2,6 +2,9 @@ name: Validator
 
 on:
   workflow_call:
+    outputs:
+      ambiente:
+        value: ${{ jobs.validator.outputs.ambiente }}
 
 jobs:
 
@@ -10,17 +13,21 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      ambiente: prd
+      ambiente: ${{ steps.detect.outputs.ambiente }}
 
     steps:
 
       - uses: actions/checkout@v4
 
       - id: detect
+        shell: bash
         run: |
-          teste="dotnet"
-          if [ -z ${teste} ]; then
-            echo "build_type=nodejs" >> $GITHUB_OUTPUT
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "ambiente=pullrequest" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.ref_name }}" == "main" || "${{ github.ref_name }}" == "master" ]]; then
+            echo "ambiente=prd" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.ref_name }}" == "uat" || "${{ github.ref_name }}" == release/* ]]; then
+            echo "ambiente=uat" >> "$GITHUB_OUTPUT"
           else
-            echo "build_type=teste" >> $GITHUB_OUTPUT
+            echo "ambiente=hml" >> "$GITHUB_OUTPUT"
           fi
