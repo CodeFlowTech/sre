@@ -10,24 +10,32 @@ jobs:
     steps:      
       - uses: CodeFlowTech/sre/modules/build/dotnet@main
 
-  build:
+  analysis:
     needs: validator
     runs-on: ubuntu-latest
     steps:
       - uses: CodeFlowTech/sre/modules/build/dotnet@main
 
-  # test:
-  #   needs: build
-  #   uses: CodeFlowTech/sre/.github/workflows/test.yml@main
+  build:
+    needs: analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: CodeFlowTech/sre/modules/build/dotnet@main
 
-  # analysis:
-  #   needs: test
-  #   uses: CodeFlowTech/sre/.github/workflows/analysis.yml@main
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: CodeFlowTech/sre/modules/build/dotnet@main
 
-  # deploy:
-  #   needs: analysis
-  #   uses: CodeFlowTech/sre/.github/workflows/deploy.yml@main
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: CodeFlowTech/sre/modules/build/dotnet@main
 
-  # notification:
-  #   needs: deploy
-  #   uses: CodeFlowTech/sre/.github/workflows/notification.yml@main
+  notification:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: CodeFlowTech/sre/modules/build/dotnet@main
