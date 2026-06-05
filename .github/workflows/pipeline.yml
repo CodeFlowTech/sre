@@ -1,0 +1,17 @@
+name: Pipeline
+
+on:
+  workflow_call:
+
+jobs:
+
+  validators:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+
+
