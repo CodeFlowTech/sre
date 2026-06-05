@@ -1,16 +1,14 @@
-name: Validator
-
 on:
   workflow_call:
 
 jobs:
 
-  build:
+  validator:
 
     runs-on: ubuntu-latest
 
     steps:
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - uses: CodeFlowTech/sre/modules/build/dotnet@main
