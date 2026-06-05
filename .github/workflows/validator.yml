@@ -3,7 +3,7 @@ on:
 
 jobs:
 
-  validator:
+  run:
 
     runs-on: ubuntu-latest
 
