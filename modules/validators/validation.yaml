@@ -24,3 +24,4 @@ jobs:
           else
             echo "build_type=teste" >> $GITHUB_OUTPUT
           fi
+          
