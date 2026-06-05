@@ -16,12 +16,6 @@ jobs:
     steps:
       - uses: CodeFlowTech/sre/modules/build/dotnet@main
 
-  analysis:
-    needs: validator
-    runs-on: ubuntu-latest
-    steps:
-      - uses: CodeFlowTech/sre/modules/build/dotnet@main
-
   security:
     needs: validator
     runs-on: ubuntu-latest
