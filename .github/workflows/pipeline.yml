@@ -5,5 +5,32 @@ on:
 
 jobs:
 
-  validators:
-    uses: CodeFlowTech/sre/modules/validators/validation.yaml@main
+name: Pipeline
+
+on:
+  workflow_call:
+
+jobs:
+
+  validator:
+    uses: CodeFlowTech/sre/.github/workflows/validator.yml@main
+
+  build:
+    needs: validator
+    uses: CodeFlowTech/sre/.github/workflows/build.yml@main
+
+  # test:
+  #   needs: build
+  #   uses: CodeFlowTech/sre/.github/workflows/test.yml@main
+
+  # analysis:
+  #   needs: test
+  #   uses: CodeFlowTech/sre/.github/workflows/analysis.yml@main
+
+  # deploy:
+  #   needs: analysis
+  #   uses: CodeFlowTech/sre/.github/workflows/deploy.yml@main
+
+  # notification:
+  #   needs: deploy
+  #   uses: CodeFlowTech/sre/.github/workflows/notification.yml@main
