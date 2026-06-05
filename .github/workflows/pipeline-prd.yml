@@ -4,12 +4,34 @@ on:
   workflow_call:
 
 jobs:
-
-  validator:
-    runs-on: ubuntu-latest
-    steps:      
-      - uses: CodeFlowTech/sre/modules/build/dotnet@main
   
-  flow:
-    uses: CodeFlowTech/sre/.github/workflows/pipeline-${{outputs.validator.ambiente}}@main
+  security:
+    needs: validator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: CodeFlowTech/sre/modules/build/dotnet@main
+
+  build:
+    needs: [analysis, security]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: CodeFlowTech/sre/modules/build/dotnet@main
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: CodeFlowTech/sre/modules/build/dotnet@main
+
+  test:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: CodeFlowTech/sre/modules/build/dotnet@main
+
+  notification:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: CodeFlowTech/sre/modules/build/dotnet@main
 
