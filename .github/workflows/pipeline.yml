@@ -6,11 +6,24 @@ on:
 jobs:
 
   validator:
-    runs-on: ubuntu-latest
-    steps:      
-      - uses: CodeFlowTech/sre/modules/build/dotnet@main
+    uses: CodeFlowTech/sre/modules/validators/validation.yaml@main
   
-  flow:
+  flow_hml:
     needs: validator
-    uses: CodeFlowTech/sre/.github/workflows/pipeline-${{ needs.validator.outputs.ambiente }}@main
+    if: needs.validator.outputs.ambiente == 'hml'
+    uses: CodeFlowTech/sre/.github/workflows/flow-ambiente-hml.yml@main
 
+  flow_prd:
+    needs: validator
+    if: needs.validator.outputs.ambiente == 'prd'
+    uses: CodeFlowTech/sre/.github/workflows/flow-ambiente-prd.yml@main
+
+  flow_uat:
+    needs: validator
+    if: needs.validator.outputs.ambiente == 'uat'
+    uses: CodeFlowTech/sre/.github/workflows/flow-ambiente-uat.yml@main
+
+  flow_pullrequest:
+    needs: validator
+    if: needs.validator.outputs.ambiente == 'pullrequest'
+    uses: CodeFlowTech/sre/.github/workflows/flow-pullrequest.yml@main

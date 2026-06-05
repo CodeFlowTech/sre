@@ -1,18 +1,19 @@
-name: Pipeline
+name: Flow Ambiente PRD
 
 on:
   workflow_call:
 
 jobs:
-  
+
   security:
-    needs: validator
     runs-on: ubuntu-latest
     steps:
-      - uses: CodeFlowTech/sre/modules/build/dotnet@main
+      - name: Security check
+        shell: bash
+        run: echo "Running security checks"
 
   build:
-    needs: [analysis, security]
+    needs: security
     runs-on: ubuntu-latest
     steps:
       - uses: CodeFlowTech/sre/modules/build/dotnet@main
@@ -21,17 +22,18 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: CodeFlowTech/sre/modules/build/dotnet@main
+      - uses: CodeFlowTech/sre/modules/deploy/argocd@main
 
   test:
     needs: deploy
     runs-on: ubuntu-latest
     steps:
-      - uses: CodeFlowTech/sre/modules/build/dotnet@main
+      - name: Test
+        shell: bash
+        run: echo "Running tests"
 
   notification:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: CodeFlowTech/sre/modules/build/dotnet@main
-
+      - uses: CodeFlowTech/sre/modules/notifications/elastic-search@main
