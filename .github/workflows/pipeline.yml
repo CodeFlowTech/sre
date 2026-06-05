@@ -41,7 +41,7 @@ jobs:
       - uses: CodeFlowTech/sre/modules/build/dotnet@main
 
   notification:
-    needs: deploy
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: CodeFlowTech/sre/modules/build/dotnet@main
