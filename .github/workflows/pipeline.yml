@@ -6,11 +6,15 @@ on:
 jobs:
 
   validator:
-    uses: CodeFlowTech/sre/.github/workflows/validator.yml@main
+    runs-on: ubuntu-latest
+    steps:      
+      - uses: CodeFlowTech/sre/modules/build/dotnet@main
 
   build:
     needs: validator
-    uses: CodeFlowTech/sre/.github/workflows/build.yml@main
+    runs-on: ubuntu-latest
+    steps:
+      - uses: CodeFlowTech/sre/modules/build/dotnet@main
 
   # test:
   #   needs: build
