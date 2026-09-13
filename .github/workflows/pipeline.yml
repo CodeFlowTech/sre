@@ -6,38 +6,49 @@ on:
 jobs:
 
   validator:
+    name: Validator
     runs-on: ubuntu-latest
     outputs:
       ambiente: ${{ steps.validation.outputs.ambiente }}
     steps:
       - id: validation
         uses: CodeFlowTech/sre/modules/validators/validation@main
-  
+
   test_analyse:
+    name: Test Analyse
+    needs: validator
     runs-on: ubuntu-latest
     steps:
       - id: test_analyse
         uses: CodeFlowTech/sre/modules/validators/validation@main
 
   build:
+    name: Build
+    needs: test_analyse
     runs-on: ubuntu-latest
     steps:
       - id: build
         uses: CodeFlowTech/sre/modules/validators/validation@main
 
   approval:
+    name: Approval
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - id: approval
         uses: CodeFlowTech/sre/modules/validators/validation@main
 
   deploy:
+    name: Deploy
+    needs: approval
     runs-on: ubuntu-latest
     steps:
       - id: deploy
         uses: CodeFlowTech/sre/modules/validators/validation@main
 
   comunicate:
+    name: Communicate
+    needs: deploy
     runs-on: ubuntu-latest
     steps:
       - id: comunicate
