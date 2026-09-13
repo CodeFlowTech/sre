@@ -11,6 +11,7 @@ jobs:
     outputs:
       ambiente: ${{ steps.validation.outputs.ambiente }}
     steps:
+      - uses: actions/checkout@v4
       - id: validation
         uses: ./.github/actions/validator
 
@@ -19,6 +20,7 @@ jobs:
     needs: validator
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - id: test_analyse
         uses: ./.github/actions/validator
 
@@ -27,6 +29,7 @@ jobs:
     needs: test_analyse
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - id: build
         uses: ./.github/actions/validator
 
@@ -35,6 +38,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - id: approval
         uses: ./.github/actions/validator
 
@@ -43,6 +47,7 @@ jobs:
     needs: approval
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - id: deploy
         uses: ./.github/actions/validator
 
@@ -51,6 +56,7 @@ jobs:
     needs: deploy
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - id: comunicate
         uses: ./.github/actions/validator
 
