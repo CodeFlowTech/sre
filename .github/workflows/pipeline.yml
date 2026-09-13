@@ -13,26 +13,33 @@ jobs:
       - id: validation
         uses: CodeFlowTech/sre/modules/validators/validation@main
   
-  build:
+  test_analyse:
     runs-on: ubuntu-latest
-    outputs:
-      ambiente: ${{ steps.validation.outputs.ambiente }}
     steps:
-      - id: validation
+      - id: test_analyse
         uses: CodeFlowTech/sre/modules/validators/validation@main
 
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - id: build
+        uses: CodeFlowTech/sre/modules/validators/validation@main
 
-  # prd:
-  #   needs: validator
-  #   if: needs.validator.outputs.ambiente == 'prd'
-  #   uses: CodeFlowTech/sre/.github/workflows/flow-ambiente-prd.yml@main
+  approval:
+    runs-on: ubuntu-latest
+    steps:
+      - id: approval
+        uses: CodeFlowTech/sre/modules/validators/validation@main
 
-  # uat:
-  #   needs: validator
-  #   if: needs.validator.outputs.ambiente == 'uat'
-  #   uses: CodeFlowTech/sre/.github/workflows/flow-ambiente-uat.yml@main
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - id: deploy
+        uses: CodeFlowTech/sre/modules/validators/validation@main
 
-  # pr:
-  #   needs: validator
-  #   if: needs.validator.outputs.ambiente == 'pullrequest'
-  #   uses: CodeFlowTech/sre/.github/workflows/flow-pullrequest.yml@main
+  comunicate:
+    runs-on: ubuntu-latest
+    steps:
+      - id: comunicate
+        uses: CodeFlowTech/sre/modules/validators/validation@main
+
