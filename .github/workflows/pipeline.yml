@@ -31,7 +31,7 @@ jobs:
         uses: CodeFlowTech/sre/modules/validators/validation@main
 
   approval:
-    name: Approval
+    name: ${{ github.ref == 'refs/heads/main' && 'Approval-GMUD' || (github.ref == 'refs/heads/staging' || startsWith(github.ref, 'refs/heads/release/')) && 'Approval-QA' || format('Approval-{0}', github.ref_name) }}
     needs: build
     runs-on: ubuntu-latest
     steps:
