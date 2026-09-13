@@ -11,52 +11,46 @@ jobs:
     outputs:
       ambiente: ${{ steps.validation.outputs.ambiente }}
     steps:
-      - uses: actions/checkout@v4
       - id: validation
-        uses: ./.github/actions/validator
+        uses: CodeFlowTech/sre/.github/actions/validator@main
 
   test_analyse:
     name: Test Analyse
     needs: validator
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
       - id: test_analyse
-        uses: ./.github/actions/validator
+        uses: CodeFlowTech/sre/.github/actions/validator@main
 
   build:
     name: Build
     needs: test_analyse
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
       - id: build
-        uses: ./.github/actions/validator
+        uses: CodeFlowTech/sre/.github/actions/validator@main
 
   approval:
     name: ${{ github.ref == 'refs/heads/main' && 'Approval-GMUD' || (github.ref == 'refs/heads/staging' || startsWith(github.ref, 'refs/heads/release/')) && 'Approval-QA' || format('Approval-{0}', github.ref_name) }}
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
       - id: approval
-        uses: ./.github/actions/validator
+        uses: CodeFlowTech/sre/.github/actions/validator@main
 
   deploy:
     name: ${{ github.ref == 'refs/heads/main' && 'Deploy-PRD' || github.ref == 'refs/heads/staging' && 'Deploy-HML' || startsWith(github.ref, 'refs/heads/release/') && 'Deploy-UAT' || format('Deploy-{0}', github.ref_name) }}
     needs: approval
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
       - id: deploy
-        uses: ./.github/actions/validator
+        uses: CodeFlowTech/sre/.github/actions/validator@main
 
   comunicate:
     name: Communicate
     needs: deploy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
       - id: comunicate
-        uses: ./.github/actions/validator
+        uses: CodeFlowTech/sre/.github/actions/validator@main
 
