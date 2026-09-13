@@ -13,10 +13,10 @@ jobs:
       - id: validation
         uses: CodeFlowTech/sre/modules/validators/validation@main
   
-  hml:
-    needs: validator
-    if: needs.validator.outputs.ambiente == 'hml'
-    uses: CodeFlowTech/sre/.github/workflows/flow-ambiente-hml.yml@main
+  # hml:
+  #   needs: validator
+  #   if: needs.validator.outputs.ambiente == 'hml'
+  #   uses: CodeFlowTech/sre/.github/workflows/flow-ambiente-hml.yml@main
 
   # prd:
   #   needs: validator
