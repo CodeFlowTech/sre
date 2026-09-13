@@ -54,7 +54,7 @@ jobs:
         uses: CodeFlowTech/sre/.github/actions/build/nodejs@main
 
   approval:
-    name: ${{ github.ref == 'refs/heads/main' && 'Approval-GMUD' || (github.ref == 'refs/heads/staging' || startsWith(github.ref, 'refs/heads/release/')) && 'Approval-QA' || format('Approval-{0}', github.ref_name) }}
+    name: ${{ github.ref == 'refs/heads/main' && 'Approval-GMUD' || 'Approval-QA' }}
     if: needs.validator.outputs.ambiente != 'pullrequest'
     needs:
       - validator
