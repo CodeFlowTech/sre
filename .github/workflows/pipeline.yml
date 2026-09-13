@@ -2,6 +2,11 @@ name: Pipeline
 
 on:
   workflow_call:
+    inputs:
+      gmud_number:
+        description: Numero da GMUD para deploy em producao
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -72,6 +77,7 @@ jobs:
         uses: CodeFlowTech/sre/.github/actions/approvals/gmud@main
         with:
           ambiente: prd
+          gmud_number: ${{ inputs.gmud_number }}
 
       - id: qa
         if: github.ref != 'refs/heads/main'

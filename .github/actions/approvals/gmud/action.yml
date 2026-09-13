@@ -12,10 +12,11 @@ runs:
   using: composite
 
   steps:
-    - name: Register approval
+    - name: Validate GMUD number
       shell: bash
+      env:
+        GMUD_NUMBER: ${{ inputs.gmud_number }}
       run: |
         set -euo pipefail
 
-        echo "GMUD approval gate reached."
-        echo "Environment: ${{ inputs.ambiente }}"
+        export
