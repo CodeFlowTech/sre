@@ -18,6 +18,9 @@ jobs:
     outputs:
       ambiente: ${{ steps.validation.outputs.ambiente }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        
       - id: validation
         uses: CodeFlowTech/sre/.github/actions/validator@main
 
@@ -27,6 +30,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
       - id: gitleaks
         uses: CodeFlowTech/sre/.github/actions/test_analize/gitleaks@main
 
@@ -39,6 +47,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
       - id: build
         uses: CodeFlowTech/sre/.github/actions/build/nodejs@main
 
@@ -51,6 +62,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
       - id: gmud
         if: github.ref == 'refs/heads/main'
         uses: CodeFlowTech/sre/.github/actions/approvals/gmud@main
@@ -72,6 +86,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
       - id: deploy
         uses: CodeFlowTech/sre/.github/actions/deploy/helm@main
         with:
