@@ -11,12 +11,17 @@ runs:
   steps:
     - id: detect
       shell: bash
+      env:
+        EVENT_NAME: ${{ github.event_name }}
+        REF_NAME: ${{ github.ref_name }}
       run: |
-        if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+        set -euo pipefail
+
+        if [[ "$EVENT_NAME" == "pull_request" ]]; then
           echo "ambiente=pullrequest" >> "$GITHUB_OUTPUT"
-        elif [[ "${{ github.ref_name }}" == "main" || "${{ github.ref_name }}" == "master" ]]; then
+        elif [[ "$REF_NAME" == "main" || "$REF_NAME" == "master" ]]; then
           echo "ambiente=prd" >> "$GITHUB_OUTPUT"
-        elif [[ "${{ github.ref_name }}" == "uat" || "${{ github.ref_name }}" == release/* ]]; then
+        elif [[ "$REF_NAME" == "uat" || "$REF_NAME" == release/* ]]; then
           echo "ambiente=uat" >> "$GITHUB_OUTPUT"
         else
           echo "ambiente=hml" >> "$GITHUB_OUTPUT"

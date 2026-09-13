@@ -1,0 +1,16 @@
+name: QA Approval
+description: Documents the non-production approval gate
+
+inputs:
+  ambiente:
+    description: Target environment
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Register approval
+      shell: bash
+      run: |
+        set -euo pipefail
+        echo "QA approval gate reached for environment: ${{ inputs.ambiente }}."

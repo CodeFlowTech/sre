@@ -1,0 +1,45 @@
+name: Notify Elasticsearch
+description: Sends pipeline status metadata to Elasticsearch when configured
+
+inputs:
+  ambiente:
+    description: Target environment
+    required: true
+  status:
+    description: Deployment status
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Notify
+      if: env.ELASTIC_URL != ''
+      shell: bash
+      run: |
+        set -euo pipefail
+        CURL_HEADERS=(--header "Content-Type: application/json")
+        payload="$(jq -n \
+          --arg repository "${{ github.repository }}" \
+          --arg workflow "${{ github.workflow }}" \
+          --arg run_id "${{ github.run_id }}" \
+          --arg ref "${{ github.ref_name }}" \
+          --arg ambiente "${{ inputs.ambiente }}" \
+          --arg status "${{ inputs.status }}" \
+          '{repository: $repository, workflow: $workflow, run_id: $run_id, ref: $ref, ambiente: $ambiente, status: $status}')"
+
+        if [[ -n "${ELASTIC_API_KEY:-}" ]]; then
+          CURL_HEADERS+=(--header "Authorization: ApiKey ${ELASTIC_API_KEY}")
+        fi
+
+        curl --fail --silent --show-error \
+          --request POST \
+          "${CURL_HEADERS[@]}" \
+          --data "$payload" \
+          "$ELASTIC_URL"
+
+    - name: Skip notification
+      if: env.ELASTIC_URL == ''
+      shell: bash
+      run: |
+        set -euo pipefail
+        echo "ELASTIC_URL was not provided; skipping Elasticsearch notification."

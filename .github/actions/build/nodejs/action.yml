@@ -1,0 +1,49 @@
+name: Build Node.js
+description: Installs dependencies and runs the Node.js build when package.json exists
+
+inputs:
+  node-version:
+    description: Node.js version
+    default: "20"
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      if: hashFiles('package.json') != ''
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Install dependencies
+      if: hashFiles('package.json') != ''
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [[ -f package-lock.json || -f npm-shrinkwrap.json ]]; then
+          npm ci
+        else
+          npm install
+        fi
+
+    - name: Build
+      if: hashFiles('package.json') != ''
+      shell: bash
+      run: |
+        set -euo pipefail
+        if npm pkg get scripts.build | grep -qv '^{}$'; then
+          npm run build
+        else
+          echo "No build script found; skipping Node.js build."
+        fi
+
+    - name: Skip Node.js build
+      if: hashFiles('package.json') == ''
+      shell: bash
+      run: |
+        set -euo pipefail
+        echo "package.json was not found; skipping Node.js build."

@@ -1,0 +1,16 @@
+name: Deploy Argo CD
+description: Placeholder for Argo CD deployments
+
+inputs:
+  ambiente:
+    description: Target environment
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Register deployment
+      shell: bash
+      run: |
+        set -euo pipefail
+        echo "Argo CD deployment gate reached for environment: ${{ inputs.ambiente }}."

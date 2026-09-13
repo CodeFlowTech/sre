@@ -3,11 +3,18 @@ name: Pipeline
 on:
   workflow_call:
 
-jobs:
+permissions:
+  contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
   validator:
     name: Validator
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     outputs:
       ambiente: ${{ steps.validation.outputs.ambiente }}
     steps:
@@ -18,39 +25,69 @@ jobs:
     name: Test Analyse
     needs: validator
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - id: test_analyse
-        uses: CodeFlowTech/sre/.github/actions/validator@main
+      - id: gitleaks
+        uses: CodeFlowTech/sre/.github/actions/test_analize/gitleaks@main
+
+      - id: sonar
+        uses: CodeFlowTech/sre/.github/actions/test_analize/sonar@main
 
   build:
     name: Build
     needs: test_analyse
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - id: build
-        uses: CodeFlowTech/sre/.github/actions/validator@main
+        uses: CodeFlowTech/sre/.github/actions/build/nodejs@main
 
   approval:
     name: ${{ github.ref == 'refs/heads/main' && 'Approval-GMUD' || (github.ref == 'refs/heads/staging' || startsWith(github.ref, 'refs/heads/release/')) && 'Approval-QA' || format('Approval-{0}', github.ref_name) }}
-    needs: build
+    if: needs.validator.outputs.ambiente != 'pullrequest'
+    needs:
+      - validator
+      - build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - id: approval
-        uses: CodeFlowTech/sre/.github/actions/validator@main
+      - id: gmud
+        if: github.ref == 'refs/heads/main'
+        uses: CodeFlowTech/sre/.github/actions/approvals/gmud@main
+        with:
+          ambiente: prd
+
+      - id: qa
+        if: github.ref != 'refs/heads/main'
+        uses: CodeFlowTech/sre/.github/actions/approvals/qa@main
+        with:
+          ambiente: ${{ needs.validator.outputs.ambiente }}
 
   deploy:
     name: ${{ github.ref == 'refs/heads/main' && 'Deploy-PRD' || github.ref == 'refs/heads/staging' && 'Deploy-HML' || startsWith(github.ref, 'refs/heads/release/') && 'Deploy-UAT' || format('Deploy-{0}', github.ref_name) }}
-    needs: approval
+    if: needs.validator.outputs.ambiente != 'pullrequest'
+    needs:
+      - validator
+      - approval
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - id: deploy
-        uses: CodeFlowTech/sre/.github/actions/validator@main
+        uses: CodeFlowTech/sre/.github/actions/deploy/helm@main
+        with:
+          ambiente: ${{ needs.validator.outputs.ambiente }}
 
   comunicate:
     name: Communicate
-    needs: deploy
+    if: always()
+    needs:
+      - validator
+      - deploy
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - id: comunicate
-        uses: CodeFlowTech/sre/.github/actions/validator@main
-
+      - id: elastic
+        uses: CodeFlowTech/sre/.github/actions/comunicate/elastic@main
+        with:
+          ambiente: ${{ needs.validator.outputs.ambiente }}
+          status: ${{ needs.deploy.result }}

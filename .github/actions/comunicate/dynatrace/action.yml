@@ -1,0 +1,42 @@
+name: Notify Dynatrace
+description: Sends pipeline status metadata to Dynatrace when configured
+
+inputs:
+  ambiente:
+    description: Target environment
+    required: true
+  status:
+    description: Deployment status
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Notify
+      if: env.DYNATRACE_URL != '' && env.DYNATRACE_TOKEN != ''
+      shell: bash
+      run: |
+        set -euo pipefail
+        payload="$(jq -n \
+          --arg eventType CUSTOM_DEPLOYMENT \
+          --arg source github-actions \
+          --arg deploymentName "${{ github.repository }}" \
+          --arg deploymentVersion "${{ github.sha }}" \
+          --arg deploymentProject "${{ github.workflow }}" \
+          --arg remediationAction "${{ inputs.status }}" \
+          --arg ambiente "${{ inputs.ambiente }}" \
+          '{eventType: $eventType, source: $source, deploymentName: $deploymentName, deploymentVersion: $deploymentVersion, deploymentProject: $deploymentProject, remediationAction: $remediationAction, ambiente: $ambiente}')"
+
+        curl --fail --silent --show-error \
+          --request POST \
+          --header "Authorization: Api-Token ${DYNATRACE_TOKEN}" \
+          --header "Content-Type: application/json" \
+          --data "$payload" \
+          "$DYNATRACE_URL/api/v2/events/ingest"
+
+    - name: Skip notification
+      if: env.DYNATRACE_URL == '' || env.DYNATRACE_TOKEN == ''
+      shell: bash
+      run: |
+        set -euo pipefail
+        echo "DYNATRACE_URL or DYNATRACE_TOKEN was not provided; skipping Dynatrace notification."

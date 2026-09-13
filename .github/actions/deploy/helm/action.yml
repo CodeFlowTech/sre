@@ -1,0 +1,59 @@
+name: Deploy Helm
+description: Deploys a Helm chart when chart files are present
+
+inputs:
+  ambiente:
+    description: Target environment
+    required: true
+  release-name:
+    description: Helm release name
+    default: ""
+    required: false
+  chart-path:
+    description: Path to the Helm chart
+    default: chart
+    required: false
+  namespace:
+    description: Kubernetes namespace
+    default: default
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Helm
+      uses: azure/setup-helm@v4
+
+    - name: Deploy
+      if: hashFiles(format('{0}/Chart.yaml', inputs.chart-path)) != ''
+      shell: bash
+      run: |
+        set -euo pipefail
+        VALUES_FILE="${{ inputs.chart-path }}/values-${{ inputs.ambiente }}.yaml"
+        RELEASE_NAME="${{ inputs.release-name }}"
+        VALUES_ARGS=()
+
+        if [[ -z "$RELEASE_NAME" ]]; then
+          RELEASE_NAME="${GITHUB_REPOSITORY##*/}"
+        fi
+
+        if [[ -f "$VALUES_FILE" ]]; then
+          VALUES_ARGS+=(--values "$VALUES_FILE")
+        fi
+
+        helm upgrade --install "$RELEASE_NAME" "${{ inputs.chart-path }}" \
+          --namespace "${{ inputs.namespace }}" \
+          --create-namespace \
+          "${VALUES_ARGS[@]}" \
+          --wait \
+          --atomic
+
+    - name: Skip Helm deploy
+      if: hashFiles(format('{0}/Chart.yaml', inputs.chart-path)) == ''
+      shell: bash
+      run: |
+        set -euo pipefail
+        echo "Chart.yaml was not found at '${{ inputs.chart-path }}'; skipping Helm deploy."
