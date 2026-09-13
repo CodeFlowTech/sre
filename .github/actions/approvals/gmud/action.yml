@@ -1,17 +1,21 @@
 name: GMUD Approval
+
 description: Documents the production approval gate
 
 inputs:
   ambiente:
     description: Target environment
-    default: prd
     required: false
+    default: prd
 
 runs:
   using: composite
+
   steps:
     - name: Register approval
       shell: bash
       run: |
         set -euo pipefail
-        echo "GMUD approval gate reached for environment: ${{ inputs.ambiente }}."
+
+        echo "GMUD approval gate reached."
+        echo "Environment: ${{ inputs.ambiente }}"
