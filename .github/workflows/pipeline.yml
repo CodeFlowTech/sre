@@ -5,25 +5,30 @@ on:
 
 jobs:
 
-  initialize:
-    uses: ./.github/workflows/initialize.yml
-
-  pr:
-    needs: initialize
-    if: needs.initialize.outputs.flow == 'pr'
-    uses: ./.github/workflows/flows/pull-request.yml
-
+  validator:
+    runs-on: ubuntu-latest
+    outputs:
+      ambiente: ${{ steps.validation.outputs.ambiente }}
+    steps:
+      - id: validation
+        uses: CodeFlowTech/sre/modules/validators/validation@main
+  
   hml:
-    needs: initialize
-    if: needs.initialize.outputs.flow == 'hml'
-    uses: ./.github/workflows/flows/hml.yml
+    needs: validator
+    if: needs.validator.outputs.ambiente == 'hml'
+    uses: CodeFlowTech/sre/.github/workflows/flow-ambiente-hml.yml@main
 
-  uat:
-    needs: initialize
-    if: needs.initialize.outputs.flow == 'uat'
-    uses: ./.github/workflows/flows/uat.yml
+  # prd:
+  #   needs: validator
+  #   if: needs.validator.outputs.ambiente == 'prd'
+  #   uses: CodeFlowTech/sre/.github/workflows/flow-ambiente-prd.yml@main
 
-  prd:
-    needs: initialize
-    if: needs.initialize.outputs.flow == 'prd'
-    uses: ./.github/workflows/flows/prd.yml
+  # uat:
+  #   needs: validator
+  #   if: needs.validator.outputs.ambiente == 'uat'
+  #   uses: CodeFlowTech/sre/.github/workflows/flow-ambiente-uat.yml@main
+
+  # pr:
+  #   needs: validator
+  #   if: needs.validator.outputs.ambiente == 'pullrequest'
+  #   uses: CodeFlowTech/sre/.github/workflows/flow-pullrequest.yml@main
