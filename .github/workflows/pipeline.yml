@@ -39,7 +39,7 @@ jobs:
         uses: CodeFlowTech/sre/modules/validators/validation@main
 
   deploy:
-    name: Deploy
+    name: ${{ github.ref == 'refs/heads/main' && 'Deploy-PRD' || github.ref == 'refs/heads/staging' && 'Deploy-HML' || startsWith(github.ref, 'refs/heads/release/') && 'Deploy-UAT' || format('Deploy-{0}', github.ref_name) }}
     needs: approval
     runs-on: ubuntu-latest
     steps:
