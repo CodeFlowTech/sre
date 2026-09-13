@@ -12,7 +12,7 @@ jobs:
       ambiente: ${{ steps.validation.outputs.ambiente }}
     steps:
       - id: validation
-        uses: CodeFlowTech/sre/modules/validators/validation@main
+        uses: ./.github/actions/validator
 
   test_analyse:
     name: Test Analyse
@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: test_analyse
-        uses: CodeFlowTech/sre/modules/validators/validation@main
+        uses: ./.github/actions/validator
 
   build:
     name: Build
@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: build
-        uses: CodeFlowTech/sre/modules/validators/validation@main
+        uses: ./.github/actions/validator
 
   approval:
     name: ${{ github.ref == 'refs/heads/main' && 'Approval-GMUD' || (github.ref == 'refs/heads/staging' || startsWith(github.ref, 'refs/heads/release/')) && 'Approval-QA' || format('Approval-{0}', github.ref_name) }}
@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: approval
-        uses: CodeFlowTech/sre/modules/validators/validation@main
+        uses: ./.github/actions/validator
 
   deploy:
     name: ${{ github.ref == 'refs/heads/main' && 'Deploy-PRD' || github.ref == 'refs/heads/staging' && 'Deploy-HML' || startsWith(github.ref, 'refs/heads/release/') && 'Deploy-UAT' || format('Deploy-{0}', github.ref_name) }}
@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: deploy
-        uses: CodeFlowTech/sre/modules/validators/validation@main
+        uses: ./.github/actions/validator
 
   comunicate:
     name: Communicate
@@ -52,5 +52,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: comunicate
-        uses: CodeFlowTech/sre/modules/validators/validation@main
+        uses: ./.github/actions/validator
 

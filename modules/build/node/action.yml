@@ -1,7 +1,0 @@
-name: Node Build
-description: Build Node applications
-runs:
-  using: composite
-  steps:
-    - run: echo "Building Node"
-      shell: bash

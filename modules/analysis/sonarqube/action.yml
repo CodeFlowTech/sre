@@ -1,7 +1,0 @@
-name: Dotnet Build
-description: Build .NET applications
-runs:
-  using: composite
-  steps:
-    - run: echo "Building .NET"
-      shell: bash

@@ -1,7 +1,0 @@
-name: ArgoCD Deploy
-description: Deploy using ArgoCD
-runs:
-  using: composite
-  steps:
-    - run: echo "Deploying with ArgoCD"
-      shell: bash
